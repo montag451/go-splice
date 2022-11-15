@@ -102,6 +102,9 @@ func copyWithOpts(dst, src FD, opts Options) (int64, error) {
 		if inPipe == 0 {
 			return written, nil
 		}
+		if opts.progress != nil {
+			opts.progress(inPipe)
+		}
 		rem := inPipe
 		for rem > 0 {
 			var n int64
@@ -126,16 +129,10 @@ func copyWithOpts(dst, src FD, opts Options) (int64, error) {
 				err = werr
 			}
 			if err != nil {
-				if opts.progress != nil {
-					opts.progress(inPipe - rem)
-				}
 				return written, err
 			}
 			rem -= n
 			written += n
-		}
-		if opts.progress != nil {
-			opts.progress(inPipe)
 		}
 	}
 }
