@@ -70,6 +70,9 @@ func copyWithOpts(dst, src FD, opts Options) (int64, error) {
 	if cerr := prc.Control(func(fd uintptr) {
 		maxLen, err = unix.FcntlInt(fd, cmd, opts.bufSize)
 	}); cerr != nil || err != nil {
+		if err == nil {
+			err = cerr
+		}
 		return 0, fmt.Errorf("failed to get/set splice pipes size: %v", err)
 	}
 	var written int64
